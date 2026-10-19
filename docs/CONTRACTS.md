@@ -15,7 +15,7 @@ Required fields: `event_id:string`, `user_id:int64`, `movie_id:int64`, `session_
 - `dau`: `date:date, daily_active_users:int64`.
 - `churn_risk`: `user_id:int64, risk_score:double, risk_category:string, contributing_indicators:string`.
 - `completion_funnel`: `movie_id:int64, plays:int64, pauses:int64, completions:int64`.
-- `analytics_summary`: `total_events:int64, total_sessions:int64, active_users:int64, completion_rate:double`.
+- `analytics_summary`: `total_events:int64, total_sessions:int64, active_users:int64, avg_buffer_ms:double, completion_rate:double`.
 
 Five-minute QoS completion = complete event count / play event count (zero if no plays); rebuffer ratio = sum(buffer milliseconds) / sum(duration milliseconds); error rate = invalid Bronze rows / raw batch rows. Title completion is the average of each session's max playback fraction. Device distribution is that device's session count / all session counts on its date. DAU counts distinct users per event date. Churn is an unvalidated engagement heuristic. Spark micro-batches include late records when processed; no streaming watermark semantics are claimed.
 

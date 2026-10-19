@@ -1,4 +1,8 @@
 .venv/
+node_modules/
+frontend/dist/
+frontend/.vercel/
+.vercel/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -9,7 +13,7 @@ dist/
 .env
 .env.*
 !.env.example
-.streamlit/secrets.toml
+!frontend/.env.example
 data/raw/
 data/bronze/
 data/silver/

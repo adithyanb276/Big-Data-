@@ -8,9 +8,9 @@ This file describes the implemented local-first workflow and optional cloud mode
 2. **Ingestion** (Fidal) — local or Boto3 batches → Snappy Parquet → content-addressed Bronze partitions.
 3. **Silver** (Lubaba) — PySpark contract enforcement, invalid-row reporting, event dedupe, sessions, and five-minute windows.
 4. **Gold** (Lubaba) — analytics plus Spark MLlib implicit ALS, ranking evaluation, and popularity fallback.
-5. **Serving** (Adithyan) — DuckDB reads Gold Parquet; Streamlit renders User and Executive portals with Plotly.
+5. **Serving** (Adithyan) — DuckDB reads Gold Parquet; FastAPI exposes read-only JSON endpoints to the React + Vite dashboard.
 
-**Cross-cutting:** Databricks Jobs orchestration · least-privilege IAM / secrets · frozen data contracts.
+**Cross-cutting:** explicit batch orchestration · least-privilege IAM / environment configuration · frozen data contracts.
 
 ## Key decisions
 
@@ -39,8 +39,17 @@ flowchart LR
 	A --> P[Gold Parquet]
 	M --> P
 	P --> D[DuckDB serving]
-	D --> U[User portal]
-	D --> E[Executive portal]
+	D --> F[FastAPI JSON API]
+	F --> FE[React + Vite dashboard]
 ```
 
-ETL and model training are explicit batch commands; the dashboard only queries exported Gold data.
+ETL and model training are explicit batch commands; the API only queries exported Gold data. React receives HTTP responses, never local files or cloud credentials.
+
+## Web application deployment
+
+The Vite frontend can be hosted as a static site. FastAPI requires Gold Parquet on persistent backend storage or an operator-managed data sync. DuckDB currently reads local filesystem paths; it does not read Gold directly from S3. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+The Vite frontend can be hosted as a static site. FastAPI requires Gold Parquet on persistent backend storage or an operator-managed data sync. DuckDB currently reads local filesystem paths; it does not read Gold directly from S3. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+## Web application deployment
+
+The frontend can be hosted as a static Vite build; the FastAPI process needs access to Gold Parquet on a persistent disk or via an operator-managed data sync. The current DuckDB serving layer reads local filesystem paths; it does not read Gold data directly from S3. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).

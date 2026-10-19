@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from pyspark.sql import DataFrame, SparkSession, Window
-from pyspark.sql import functions as F
-from pyspark.ml.recommendation import ALS
+if TYPE_CHECKING:
+    from pyspark.sql import DataFrame
 
 EVENT_COLUMNS = [
     "event_id", "user_id", "movie_id", "session_id", "event_type", "position_ms",
@@ -18,6 +17,8 @@ EVENT_COLUMNS = [
 
 def clean_events(raw: DataFrame) -> tuple[DataFrame, DataFrame]:
     """Cast contract types, report malformed rows, and deduplicate by event_id."""
+    from pyspark.sql import functions as F
+
     missing = set(EVENT_COLUMNS) - set(raw.columns)
     if missing:
         raise ValueError(f"Input schema missing event fields: {sorted(missing)}")
@@ -48,6 +49,8 @@ def clean_events(raw: DataFrame) -> tuple[DataFrame, DataFrame]:
 
 def build_gold(events: DataFrame, invalid_count: int = 0) -> dict[str, DataFrame]:
     """Build contract-aligned analytics tables from valid, deduplicated events."""
+    from pyspark.sql import Window, functions as F
+
     sessions = events.groupBy("session_id", "user_id", "movie_id", "device").agg(
         F.max(F.col("position_ms") / F.col("duration_ms")).alias("completion_fraction"),
         F.max(F.when(F.col("event_type") == "complete", 1).otherwise(0)).alias("completed"),
@@ -99,7 +102,7 @@ def build_gold(events: DataFrame, invalid_count: int = 0) -> dict[str, DataFrame
     )
     summary = events.agg(
         F.count("*").alias("total_events"), F.countDistinct("session_id").alias("total_sessions"),
-        F.countDistinct("user_id").alias("active_users"),
+        F.countDistinct("user_id").alias("active_users"), F.avg("buffer_ms").alias("avg_buffer_ms"),
     ).crossJoin(sessions.agg(F.avg("completion_fraction").alias("completion_rate")))
     return {
         "qos_5min": qos, "completion_by_title": title,
@@ -137,6 +140,9 @@ def train_recommendations(
     alpha: float = 1.0, max_iter: int = 8, seed: int = 42,
 ) -> tuple[DataFrame, dict[str, Any]]:
     """Train implicit ALS, evaluate held-out ranking, and fill users via popularity."""
+    from pyspark.ml.recommendation import ALS
+    from pyspark.sql import Window, functions as F
+
     interactions = events.groupBy("user_id", "movie_id").agg(
         F.sum(F.when(F.col("event_type") == "complete", 2.0)
               .otherwise(F.col("position_ms") / F.col("duration_ms"))).alias("rating")
@@ -193,6 +199,8 @@ def train_recommendations(
 
 def run_pipeline(bronze_path: str | Path, gold_path: str | Path, *, als_top_n: int = 10) -> dict[str, Any]:
     """Read Bronze Parquet, build Silver/Gold, train ALS, and write output Parquet."""
+    from pyspark.sql import SparkSession
+
     spark = SparkSession.builder.appName("StreamPulse").getOrCreate()
     raw = spark.read.parquet(str(bronze_path))
     events, invalid = clean_events(raw)

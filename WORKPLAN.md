@@ -26,12 +26,12 @@ Tick boxes as you go. This is the single "what do I do next" file.
 
 ## Adithyan — Analytics Engineering & Serving
 
-- [x] Streamlit dual-portal application
 - [x] DuckDB serving layer over Gold Parquet
-- [x] Executive Portal: QoS, completion funnel, device, churn-risk dashboard (Plotly)
-- [x] User Portal: personalized slates, "why recommended", continue-watching
+- [x] FastAPI REST endpoints for overview, QoS, content, devices, users, recommendations
+- [x] React + Vite responsive analytics and recommendation dashboard
+- [x] API tests for Parquet queries, filters, missing data, and recommendation fallback
 - [ ] Recommender-quality visualization (how good are the recs?)
-- [ ] Deploy to Streamlit Community Cloud (secrets, not committed keys)
+- [ ] Deploy static frontend and FastAPI backend separately
 - [x] Final repository documentation / README polish (shared concern)
 - **Learn:** analytics engineering (DuckDB over Parquet), data viz & dashboards, recommender consumption, cloud deployment
 
@@ -39,9 +39,9 @@ Tick boxes as you go. This is the single "what do I do next" file.
 
 | Phase | Fidal | Lubaba | Adithyan |
 |---|---|---|---|
-| **Week 1** (Days 1–7) | Simulator; S3 + IAM; first Bronze uploads; freeze Contract A | Databricks CE; design Silver vs Contract A; prototype S3 reads | Streamlit skeleton + wireframes; DuckDB layer vs mocked Gold |
-| **Week 2** (Days 8–14) | Harden ingestion; data-quality; Databricks Jobs schedule | Silver ETL + QoS; rating matrix; train & tune ALS; lead Spark pairing | Wire portals to real Gold; Plotly dashboards; rec-quality viz |
-| **Week 3** (Days 15–21) | Full-volume run; cost/limit checks; validate MinIO fallback | Final ALS eval; freeze Gold; model write-up | Deploy to Streamlit Cloud; polish; integration test; final docs |
+| **Week 1** (Days 1–7) | Simulator; S3 + IAM; first Bronze uploads; freeze Contract A | Databricks CE; design Silver vs Contract A; prototype S3 reads | React + Vite shell; DuckDB layer vs mocked Gold |
+| **Week 2** (Days 8–14) | Harden ingestion; data-quality; Databricks Jobs schedule | Silver ETL + QoS; rating matrix; train & tune ALS; lead Spark pairing | FastAPI contract; charts and recommendation UX |
+| **Week 3** (Days 15–21) | Full-volume run; cost/limit checks; validate MinIO fallback | Final ALS eval; freeze Gold; model write-up | Deploy frontend/backend separately; polish; integration test; final docs |
 
 ## Shared-learning guarantee
 
@@ -49,4 +49,4 @@ All three pair on the Databricks + Spark setup in Week 2, so **everyone writes a
 
 ## Current state (2026-10-19)
 
-Local source and non-Spark tests are implemented. Spark/ALS execution is unverified in this environment because Java is unavailable. AWS and Databricks were not configured; no cloud resources were created.
+React + Vite, FastAPI, DuckDB serving, API tests, and deployment configuration are implemented on the feature branch. Spark/ALS execution remains unverified because Java is unavailable. AWS and Databricks were not configured; no cloud resources were created.

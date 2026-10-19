@@ -6,7 +6,7 @@ A 3-week project only works if nobody blocks anybody. These rules keep us moving
 
 1. **Freeze the data contracts in Week 1.** `docs/CONTRACTS.md` is treated like an API. If a contract must change, announce it, bump the version, and tell the person downstream.
 2. **Build against mocks first.** Use `data/samples/` so you never wait for someone else's real output. Lubaba doesn't wait for Fidal's live data; Adithyan doesn't wait for Lubaba's real model.
-3. **Never commit secrets.** No AWS keys, no `.env`, no tokens. They go in `.env` (git-ignored) and in Streamlit secrets. If a secret is ever committed, rotate it immediately.
+3. **Never commit secrets.** No AWS keys, no `.env`, no tokens. Use ignored local `.env` files or deployment secret managers. If a secret is ever committed, rotate it immediately.
 
 ## Git workflow
 

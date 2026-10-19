@@ -23,11 +23,32 @@ class GoldStore:
         if not name.replace("_", "").isalnum():
             raise ValueError("Invalid Gold table name")
         path = self.root / name
-        if not path.exists():
+        if not self.table_exists(name):
             return pd.DataFrame()
         return self.connection.execute(
             "SELECT * FROM read_parquet(?) LIMIT ?", [str(path / "**/*.parquet"), limit]
         ).fetchdf()
+
+    def user_recommendations(self, user_id: int, *, limit: int = 20) -> pd.DataFrame:
+        """Return one user's precomputed recommendations without loading the full table."""
+        path = self.root / "recommendations"
+        if not self.table_exists("recommendations"):
+            return pd.DataFrame()
+        return self.connection.execute(
+            "SELECT * FROM read_parquet(?) WHERE user_id = ? ORDER BY rank LIMIT ?",
+            [str(path / "**/*.parquet"), user_id, limit],
+        ).fetchdf()
+
+    def available_users(self, *, limit: int = 1000) -> pd.DataFrame:
+        """Return distinct user IDs from activity, with recommendation-only fallback."""
+        for table in ("churn_risk", "silver_events", "recommendations"):
+            path = self.root / table
+            if self.table_exists(table):
+                return self.connection.execute(
+                    'SELECT DISTINCT user_id FROM read_parquet(?) ORDER BY user_id LIMIT ?',
+                    [str(path / "**/*.parquet"), limit],
+                ).fetchdf()
+        return pd.DataFrame(columns=["user_id"])
 
     def filtered(
         self, name: str, *, device: str | None = None,
@@ -38,7 +59,7 @@ class GoldStore:
         if not name.replace("_", "").isalnum():
             raise ValueError("Invalid Gold table name")
         path = self.root / name
-        if not path.exists():
+        if not self.table_exists(name):
             return pd.DataFrame()
         predicates, values = [], [str(path / "**/*.parquet")]
         if device and device != "All" and name in {"qos_5min", "device_distribution"}:

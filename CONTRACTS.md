@@ -43,7 +43,7 @@ All fields are non-null in valid Silver rows. Bronze preserves input, including 
 - `dau` — `date, daily_active_users`
 - `churn_risk` — `user_id, risk_score, risk_category, contributing_indicators`
 - `completion_funnel` — `movie_id, plays, pauses, completions`
-- `analytics_summary` — `total_events, total_sessions, active_users, completion_rate`
+- `analytics_summary` — `total_events, total_sessions, active_users, avg_buffer_ms, completion_rate`
 
 Metric definitions: `qos_5min.completion_rate` = complete events / play events (zero if no plays); `rebuffer_ratio` = summed buffer milliseconds / summed duration milliseconds; `avg_bitrate` is Kbps; `error_rate` = invalid raw rows / raw rows in the batch. Title completion is mean per-session maximum `position_ms / duration_ms`; drop-off point is mean `1 - completion_fraction`. Invalid rows are excluded from Silver and retained in quality counts. Late records are included when their micro-batch is processed; no continuous-stream watermark behavior is claimed. Completion funnel counts events, not unique sessions.
 
@@ -51,4 +51,5 @@ Uniqueness: `event_id` in Silver; (`window_start`, `device`) for QoS; `movie_id`
 
 ## Version
 
+- API v1 — read-only JSON endpoints expose existing Gold outputs; analytics definitions and logical keys are unchanged.
 - v1.1 — 2026-10-19. Clarified units, quality handling, metric definitions, and Gold fields while preserving responsibilities and core fields.

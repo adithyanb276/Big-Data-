@@ -47,16 +47,6 @@ def test_recommendation_explanation_uses_observed_genres() -> None:
     assert "beyond" in explanation_for_user(history, "Sci-Fi")
 
 
-def test_dashboard_both_portals_load_without_gold_data(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    from streamlit.testing.v1 import AppTest
-
-    monkeypatch.setenv("STREAMPULSE_GOLD_DIR", str(tmp_path / "gold"))
-    app = AppTest.from_file("app/streamlit_app.py", default_timeout=20).run()
-    assert not app.exception
-    app.sidebar.radio[0].set_value("Executive").run()
-    assert not app.exception
-
-
 def test_spark_cleaning_and_gold_metrics(spark) -> None:
     from streampulse.processing import build_gold, clean_events
 

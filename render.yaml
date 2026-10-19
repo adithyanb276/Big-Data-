@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: streampulse-api
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements-api.txt && pip install --no-deps -e .
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    disk:
+      name: streampulse-gold
+      mountPath: /var/data/streampulse
+      sizeGB: 5
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: STREAMPULSE_MODE
+        value: local
+      - key: STREAMPULSE_GOLD_DIR
+        value: /var/data/streampulse/gold
+      - key: STREAMPULSE_CATALOGUE_PATH
+        value: /var/data/streampulse/movie_catalogue.parquet
+      - key: STREAMPULSE_CORS_ORIGINS
+        sync: false

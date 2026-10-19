@@ -4,9 +4,9 @@ Tick boxes as you go. This is the single "what do I do next" file.
 
 ## Fidal — Cloud Data Engineering & Ingestion
 
-- [ ] Build Python telemetry simulator (Zipfian popularity, realistic sessions, tunable scale)
+- [x] Build Python telemetry simulator (Zipfian popularity, realistic sessions, tunable scale)
 - [ ] Create AWS S3 bucket + least-privilege IAM user
-- [ ] Boto3 uploader: batch → Snappy Parquet → S3, idempotent + retry
+- [x] Boto3 uploader: batch → Snappy Parquet → S3, idempotent + retry (cloud untested)
 - [ ] Bronze Delta layer with `dt/hr` partitioning + schema enforcement
 - [ ] Data-quality checks (nulls, bad types, duplicates)
 - [ ] Databricks Jobs schedule for the micro-batch refresh (shared concern)
@@ -16,23 +16,23 @@ Tick boxes as you go. This is the single "what do I do next" file.
 ## Lubaba — Big Data Processing & ML
 
 - [ ] Set up Databricks Community Edition + S3 connection (shared concern; lead the Spark pairing)
-- [ ] Silver PySpark ETL: dedupe, null handling, sessionization
-- [ ] 5-minute tumbling-window QoS metrics
-- [ ] Build implicit-feedback rating matrix from watch-completion
-- [ ] Train ALS; tune `rank / regParam / alpha / maxIter`
-- [ ] Evaluate with ranking metrics (precision@k, NDCG); add popularity cold-start fallback
-- [ ] Write Gold `recommendations` + analytics tables; **freeze Contract B**
+- [x] Silver PySpark ETL: dedupe, null handling, sessionization (Spark tests require Java)
+- [x] 5-minute tumbling-window QoS metrics
+- [x] Build implicit-feedback rating matrix from watch-completion
+- [x] Train ALS; configure `rank / regParam / alpha / maxIter` (execution awaits Java)
+- [x] Evaluate with ranking metrics (precision@k, NDCG); add popularity cold-start fallback
+- [x] Write Gold `recommendations` + analytics tables; **freeze Contract B**
 - **Learn:** distributed Spark, Medallion pattern, matrix-factorization recommenders, implicit feedback, ranking evaluation
 
 ## Adithyan — Analytics Engineering & Serving
 
-- [ ] Streamlit skeleton + dual-portal wireframes
-- [ ] DuckDB serving layer over Gold Parquet (build against mocked Contract B first)
-- [ ] Executive Portal: QoS, completion-funnel, device, churn-risk dashboards (Plotly)
-- [ ] User Portal: personalized slates, "why recommended", continue-watching
+- [x] Streamlit dual-portal application
+- [x] DuckDB serving layer over Gold Parquet
+- [x] Executive Portal: QoS, completion funnel, device, churn-risk dashboard (Plotly)
+- [x] User Portal: personalized slates, "why recommended", continue-watching
 - [ ] Recommender-quality visualization (how good are the recs?)
 - [ ] Deploy to Streamlit Community Cloud (secrets, not committed keys)
-- [ ] Final repository documentation / README polish (shared concern)
+- [x] Final repository documentation / README polish (shared concern)
 - **Learn:** analytics engineering (DuckDB over Parquet), data viz & dashboards, recommender consumption, cloud deployment
 
 ## 3-Week schedule
@@ -46,3 +46,7 @@ Tick boxes as you go. This is the single "what do I do next" file.
 ## Shared-learning guarantee
 
 All three pair on the Databricks + Spark setup in Week 2, so **everyone writes at least one Spark job** regardless of their primary module.
+
+## Current state (2026-10-19)
+
+Local source and non-Spark tests are implemented. Spark/ALS execution is unverified in this environment because Java is unavailable. AWS and Databricks were not configured; no cloud resources were created.

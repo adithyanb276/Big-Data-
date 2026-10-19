@@ -20,10 +20,13 @@ A 3-week project only works if nobody blocks anybody. These rules keep us moving
 
 ## Code & environment conventions
 
-- Python 3.10+. Pin every dependency in `requirements.txt` (exact versions).
+- Python 3.11 is recommended. Install Java 17+ for local Spark, then `python3.11 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && pip install -e .`.
+- Local mode needs no cloud configuration. Copy `.env.example` only to override defaults; never commit `.env`.
 - Each person works inside their own top-level folder (`ingestion/`, `processing/`, `app/`). Shared helpers go in a small `common/` module if needed — agree before adding.
 - Keep notebooks (Databricks) exported to the repo as `.py` or `.ipynb` so they're reviewable.
 - One `requirements.txt` for the repo; note Databricks-only libs separately.
+
+Generate a small dataset, run local ingestion, and `pytest -q` before opening a PR. See `docs/SETUP.md` for exact commands.
 
 ## Definition of Done (every task)
 

@@ -1,0 +1,22 @@
+{
+  "event_count": 100,
+  "invalid_count": 0,
+  "seed": 42,
+  "users": 20,
+  "movies": 15,
+  "batch_size": 100,
+  "schema": [
+    "event_id",
+    "user_id",
+    "movie_id",
+    "session_id",
+    "event_type",
+    "position_ms",
+    "duration_ms",
+    "bitrate",
+    "buffer_ms",
+    "device",
+    "app_version",
+    "event_ts"
+  ]
+}

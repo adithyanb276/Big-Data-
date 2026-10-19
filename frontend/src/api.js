@@ -15,9 +15,20 @@ async function request(path, signal) {
 export const api = {
   health: (signal) => request('/api/health', signal),
   overview: (signal) => request('/api/overview', signal),
-  qos: (signal) => request('/api/analytics/qos?limit=1000', signal),
+  qos: ({ device, startDate, endDate } = {}, signal) => {
+    const params = new URLSearchParams({ limit: '1000' });
+    if (device && device !== 'all') params.set('device', device);
+    if (startDate) params.set('start_date', startDate);
+    if (endDate) params.set('end_date', endDate);
+    return request(`/api/analytics/qos?${params}`, signal);
+  },
   content: (signal) => request('/api/analytics/content?limit=500', signal),
-  devices: (signal) => request('/api/analytics/devices?limit=500', signal),
+  devices: ({ startDate, endDate } = {}, signal) => {
+    const params = new URLSearchParams({ limit: '500' });
+    if (startDate) params.set('start_date', startDate);
+    if (endDate) params.set('end_date', endDate);
+    return request(`/api/analytics/devices?${params}`, signal);
+  },
   usersActivity: (signal) => request('/api/analytics/users?limit=1000', signal),
   users: (signal) => request('/api/users?limit=1000', signal),
   recommendations: (userId, signal) => request(`/api/recommendations/${userId}`, signal),
